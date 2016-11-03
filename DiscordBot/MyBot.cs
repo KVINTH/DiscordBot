@@ -56,6 +56,7 @@ namespace DiscordBot
             RegisterMemeCommand();
             RegisterQuoteCommand();
             RegisterAddQuoteCommand();
+            RegisterRefreshQuotesCommand();
 
             discord.ExecuteAndWait(async () =>
             {
@@ -66,6 +67,7 @@ namespace DiscordBot
         }
 
         #region Registers
+
         /// <summary>
         /// Registers the Meme command
         /// </summary>
@@ -110,7 +112,7 @@ namespace DiscordBot
 
                     string splitMessage = message.Substring(10);
 
-                    await e.Channel.SendMessage("Your message was: " + splitMessage);
+                    await e.Channel.SendMessage("Added quote: " + splitMessage);
 
                     //System.IO.File.WriteAllText("quotes.txt", splitMessage);
 
@@ -119,6 +121,20 @@ namespace DiscordBot
                     {
                         file.WriteLine(splitMessage + ",");
                     }
+                });
+        }
+
+        /// <summary>
+        /// Registers the RefreshQuotes command
+        /// </summary>
+        private void RegisterRefreshQuotesCommand()
+        {
+            commands.CreateCommand("refreshquotes")
+                .Description("Refreshes the list of quotes, use this command after adding a quote.")
+                .Do(async (e) =>
+                {
+                    quotes = System.IO.File.ReadAllLines("quotes.txt");
+                    await e.Channel.SendMessage("Quotes have been refreshed!");
                 });
         }
         #endregion
